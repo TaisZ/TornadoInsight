@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.BrowserUtil;
@@ -19,6 +20,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.ui.Messages;
 import com.tais.tornado_plugins.entity.Method;
 import com.tais.tornado_plugins.entity.TornadoSetting;
 import com.tais.tornado_plugins.ui.ConsoleOutputToolWindow;
@@ -47,7 +49,10 @@ public class ExecutionEngine {
 
     private final HashMap<String, Method> fileMethodMap;
 
-    public ExecutionEngine(String tempFolderPath, HashMap<String, Method> fileMethodMap) {
+    private final Project project;
+
+    public ExecutionEngine(Project project, String tempFolderPath, HashMap<String, Method> fileMethodMap) {
+        this.project = project;
         this.tempFolderPath = tempFolderPath;
         this.fileMethodMap = fileMethodMap;
         String jar1 = extractResourceToFile("tornado-matrices-0.15.2.jar");
@@ -184,7 +189,6 @@ public class ExecutionEngine {
         }
     }
 
-    //TODO: Bug submission interface
     private void executeJars(String jarFolderPath) {
         ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
                 print("Tests are being executed...\n",
@@ -259,16 +263,18 @@ public class ExecutionEngine {
         ApplicationManager.getApplication().runReadAction(() -> {
             String methodName = TornadoTWTask.psiMethodFormat(fileMethodMap.get(javaPath).getMethod());
             if (hasException) {
-                String outputAnalysis = OutputAnalysis.analysis(output);
-                ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                        print("["+  Instant.now() + "] " + methodName + ": " + outputAnalysis+"\n",
+                ConsoleView consoleView = ConsoleOutputToolWindow.getConsoleView(project);
+                consoleView.print("["+  Instant.now() + "] " + methodName + ": " + output.getStderr(),
                                 ConsoleViewContentType.ERROR_OUTPUT);
-                ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                        print("Please visit the TornadoVM docs for more info: " +
+                consoleView.print("Test assigning values to variables using default values, ",ConsoleViewContentType.LOG_INFO_OUTPUT);
+                consoleView.printHyperlink("customise your assignments\n"
+                                , project -> Messages.showMessageDialog(project,
+                                        "This dialogue box will be reserved for the user to change the assigned value.",
+                                        "Dialog Title", Messages.getInformationIcon()));
+                consoleView.print("Please visit the TornadoVM docs for more info: " +
                                         "https://tornadovm.readthedocs.io/en/latest/unsupported.html"+"\n"
                                 ,ConsoleViewContentType.LOG_INFO_OUTPUT);
-                ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                        print("Got a bug? Report it to TornadoVM team: " +
+                consoleView.print("Got a bug? Report it to TornadoVM team: " +
                                         "https://github.com/beehive-lab/TornadoVM/issues"+"\n",
                                 ConsoleViewContentType.LOG_INFO_OUTPUT);
             } else {

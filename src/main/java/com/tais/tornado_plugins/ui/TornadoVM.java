@@ -1,5 +1,6 @@
 package com.tais.tornado_plugins.ui;
 
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBList;
 import com.tais.tornado_plugins.service.TWTasksButtonEvent;
@@ -15,7 +16,7 @@ import static javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION;
  * within the IntelliJ IDEA environment, including Task listings and inspectors
  * </p>
  */
-public class TornadoVM {
+public class TornadoVM extends SimpleToolWindowPanel {
 
     // UI components
     private JTabbedPane tabbedPanel;
@@ -34,13 +35,14 @@ public class TornadoVM {
      * @param toolWindow the IntelliJ tool window
      */
     public TornadoVM(ToolWindow toolWindow) {
+        super(Boolean.FALSE, Boolean.TRUE);
         TWTasksButtonEvent service = new TWTasksButtonEvent();
         DefaultListModel<String> defaultListModel = new DefaultListModel<>();
         tasksList.setModel(defaultListModel);
         tasksList.getEmptyText().setText("No TornadoVM task detected");
         tasksList.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
         button1.setText("Applying TornadoVM Dynamic Inspection");
-        button1.addActionListener(e -> service.pressButton());
+        button1.addActionListener(e -> service.pressButton(toolWindow.getProject()));
 
         DefaultListModel<String> inspectorListModel = new DefaultListModel<>();
         inspectorList.setModel(inspectorListModel);

@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.util.ui.UI;
 import com.tais.tornado_plugins.entity.TornadoSetting;
+import com.tais.tornado_plugins.util.InputValidation;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -58,8 +59,10 @@ public class TornadoSettingConfiguration implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        //TODO: Validate file
-        TornadoSetting.getInstance().setVarFile = fileChooser.getText();
+        //Validate the source file
+        if (InputValidation.validateSourceFile(fileChooser.getText())){
+            TornadoSetting.getInstance().setVarFile = fileChooser.getText();
+        }
         System.out.println(fileChooser.getText());
     }
 }

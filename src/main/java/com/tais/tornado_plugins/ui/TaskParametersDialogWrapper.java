@@ -1,5 +1,6 @@
 package com.tais.tornado_plugins.ui;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.psi.PsiMethod;
@@ -10,7 +11,6 @@ import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBTextField;
 import com.tais.tornado_plugins.entity.Method;
 import com.tais.tornado_plugins.entity.MethodsCollection;
-import com.tais.tornado_plugins.service.TWTasksButtonEvent;
 import com.tais.tornado_plugins.util.InputValidation;
 import com.tais.tornado_plugins.util.MessageBundle;
 import com.tais.tornado_plugins.util.TornadoTWTask;
@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -30,10 +29,13 @@ public class TaskParametersDialogWrapper extends DialogWrapper {
     private final HashMap<String, JBTextField> textFieldsList;
     private final HashMap<PsiParameter, JPanel> copiesSettingList;
 
-    public TaskParametersDialogWrapper(ArrayList<PsiMethod> methodsList) {
+    private final Project project;
+
+    public TaskParametersDialogWrapper(Project project, ArrayList<PsiMethod> methodsList) {
         super(true);
         setTitle("Method Parameters");
         this.methodsList = methodsList;
+        this.project = project;
         labelArrayList = new ArrayList<>();
         textFieldsList = new HashMap<>();
         copiesSettingList = new HashMap<>();
@@ -104,11 +106,11 @@ public class TaskParametersDialogWrapper extends DialogWrapper {
                 }
             }
             methodsCollection.addMethod(new Method(method, parameterValue, defaultList, toDeviceList, toHostList));
-            try {
-                new TWTasksButtonEvent().fileCreationHandler(methodsCollection, TornadoTWTask.getImportCodeBlock());
+            /*try {
+                new TWTasksButtonEvent().fileCreationHandler(project, methodsCollection, TornadoTWTask.getImportCodeBlock());
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
         }
         super.doOKAction();
     }

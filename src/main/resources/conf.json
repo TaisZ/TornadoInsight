@@ -50,6 +50,9 @@
     "VectorInt3",
     "VectorInt4",
     "VectorInt8",
-    "VolumeShort2"
+    "VolumeShort2",
+    "IntArray",
+    "FloatArray",
+    "DoubleArray"
   ]
 }
