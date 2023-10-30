@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.ui;
+package com.tais.tornado_plugins.ui.console;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;

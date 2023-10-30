@@ -1,9 +1,10 @@
-package com.tais.tornado_plugins.entity;
+package com.tais.tornado_plugins.ui.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,11 +13,14 @@ import org.jetbrains.annotations.Nullable;
  * for persistent storage and retrieval of configuration details.
  * The settings are persisted across IDE sessions and stored in 'tornado.xml'.
  */
-@State(name = "tornadovm", storages = {@Storage(value = "tornado.xml")})
-public class TornadoSetting implements PersistentStateComponent<TornadoSetting> {
+@State(name = "TornadoVMSettingsState", storages = {@Storage(value = "TornadoSettings.xml")})
+public class TornadoSettingState implements PersistentStateComponent<TornadoSettingState> {
 
     // File path for the TornadoVM environment variable file.
-    public String setVarFile;
+    public String TornadoRoot;
+    public String Java21;
+
+    public int parameterSize;
 
     /**
      * Retrieves the singleton instance of the TornadoSetting.
@@ -24,8 +28,8 @@ public class TornadoSetting implements PersistentStateComponent<TornadoSetting> 
      *
      * @return The singleton instance of TornadoSetting.
      */
-    public static TornadoSetting getInstance() {
-        return ApplicationManager.getApplication().getService(TornadoSetting.class);
+    public static TornadoSettingState getInstance() {
+        return ApplicationManager.getApplication().getService(TornadoSettingState.class);
     }
 
     /**
@@ -35,7 +39,7 @@ public class TornadoSetting implements PersistentStateComponent<TornadoSetting> 
      * @return The current state of the TornadoSetting.
      */
     @Override
-    public @Nullable TornadoSetting getState() {
+    public @Nullable TornadoSettingState getState() {
         return this;
     }
 
@@ -46,7 +50,11 @@ public class TornadoSetting implements PersistentStateComponent<TornadoSetting> 
      * @param state The TornadoSetting object that represents the saved state.
      */
     @Override
-    public void loadState(@NotNull TornadoSetting state) {
-        this.setVarFile = state.setVarFile;
+    public void loadState(@NotNull TornadoSettingState state) {
+        XmlSerializerUtil.copyBean(state,this);
+    }
+
+    public String setVarsPath(){
+        return TornadoRoot + "/setvars.sh";
     }
 }

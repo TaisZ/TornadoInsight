@@ -15,7 +15,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
-import com.tais.tornado_plugins.ui.ConsoleWindowFactory;
+import com.tais.tornado_plugins.ui.console.ConsoleWindowFactory;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.jetbrains.annotations.NotNull;
 

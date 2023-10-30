@@ -8,18 +8,20 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
-import com.tais.tornado_plugins.entity.TornadoSetting;
-import com.tais.tornado_plugins.util.InputValidation;
+import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import org.jetbrains.annotations.NotNull;
 
 public class TornadoSettingListener implements ProjectManagerListener {
 
     @Override
     public void projectOpened(@NotNull Project project) {
-        if (TornadoSetting.getInstance().setVarFile != null) {
-            if (InputValidation.validateSourceFile(TornadoSetting.getInstance().setVarFile)){
-                TornadoSetting.getInstance().setVarFile = null;
-            }
+        if (TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
+//            if (InputValidation.validateSourceFile(TornadoSetting.getInstance().setVarFile)){
+//                TornadoSetting.getInstance().setVarFile = null;
+//            }
+//            Future<Boolean> validationFuture = InputValidation.validateSourceFile(TornadoSettingState.getInstance().TornadoRoot);
+        return;
+
         }else {
             Notification notification = new Notification("Print", "TornadoVM",
                     "Please configure the TornadoVM environment variable file", NotificationType.INFORMATION);

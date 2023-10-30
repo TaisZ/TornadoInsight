@@ -4,8 +4,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
@@ -16,14 +14,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.Messages;
-import com.tais.tornado_plugins.entity.Method;
-import com.tais.tornado_plugins.entity.TornadoSetting;
-import com.tais.tornado_plugins.ui.ConsoleOutputToolWindow;
+import com.intellij.psi.PsiMethod;
+import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
+import com.tais.tornado_plugins.util.MessageUtils;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +30,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.jar.Attributes;
@@ -47,16 +42,16 @@ public class ExecutionEngine {
 
     private final String tempFolderPath;
 
-    private final HashMap<String, Method> fileMethodMap;
+    private final HashMap<String, PsiMethod> fileMethodMap;
 
     private final Project project;
 
-    public ExecutionEngine(Project project, String tempFolderPath, HashMap<String, Method> fileMethodMap) {
+    public ExecutionEngine(Project project, String tempFolderPath, HashMap<String, PsiMethod> fileMethodMap) {
         this.project = project;
         this.tempFolderPath = tempFolderPath;
         this.fileMethodMap = fileMethodMap;
-        String jar1 = extractResourceToFile("tornado-matrices-0.15.2.jar");
-        String jar2 = extractResourceToFile("tornado-api-0.15.2.jar");
+        String jar1 = extractResourceToFile("tornado-matrices-0.16.jar");
+        String jar2 = extractResourceToFile("tornado-api-0.16.jar");
         jars = jar1 + ":" + jar2;
     }
 
@@ -99,13 +94,9 @@ public class ExecutionEngine {
         // Performing UI related operations on a non-EDT is not allowed.
         // To ensure that the code executes on EDT, need use Application.invokeLater().
         Application application = ApplicationManager.getApplication();
-        ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                print("["+  Instant.now() + "] Testing is starting...\n", ConsoleViewContentType.NORMAL_OUTPUT);
+        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Starting Test...");
         application.executeOnPooledThread(() -> {
             ArrayList<String> files = new ArrayList<>(fileMethodMap.keySet());
-            ApplicationManager.getApplication().invokeLater(() -> {
-                ConsoleOutputToolWindow.toolWindow.activate(null, false);
-            });
             try {
                 compile(jars, tempFolderPath, files);
                 packFolder(tempFolderPath, tempFolderPath);
@@ -129,12 +120,12 @@ public class ExecutionEngine {
 //            if (javacPath == null) {
 //                throw new IllegalStateException("Javac path not found!");
 //            }
-        ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                print("Compiling test files...\n",
-                        ConsoleViewContentType.NORMAL_OUTPUT);
-
+        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Compiling test files...");
         GeneralCommandLine commandLine = new GeneralCommandLine();
         commandLine.setExePath("javac");
+        commandLine.addParameter("--release");
+        commandLine.addParameter("21");
+        commandLine.addParameter("--enable-preview");
         commandLine.addParameter("-g");
         commandLine.addParameter("-classpath");
         commandLine.addParameter(classpath);
@@ -146,17 +137,14 @@ public class ExecutionEngine {
         try {
             System.out.println(ExecUtil.execAndGetOutput(commandLine));
         } catch (ExecutionException e) {
-            ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                    print("Compilation failure, may be JAVA_HOME is not correctly identified or " +
-                                    "there are temporarily unsupported data types\n",
-                            ConsoleViewContentType.ERROR_OUTPUT);
+            MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing",
+                    "Compilation failure, may be JAVA_HOME is not correctly identified or " +
+                    "there are temporarily unsupported data types");
         }
     }
 
     private void packFolder(String classFolderPath, String outputFolderPath) throws IOException {
-        ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                print("Packing test files...\n",
-                        ConsoleViewContentType.NORMAL_OUTPUT);
+        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Packing test files...");
         File classFolder = new File(classFolderPath);
         File[] classFiles = classFolder.listFiles((dir, name) -> name.endsWith(".class"));
         if (classFiles == null) {
@@ -182,20 +170,16 @@ public class ExecutionEngine {
                 Files.copy(classPath, jos);
                 jos.closeEntry();
             } catch (IOException e) {
-                ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                        print("Failed to package test files\n",
-                                ConsoleViewContentType.ERROR_OUTPUT);
+                MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing", "Failed to package test files");
             }
         }
     }
 
     private void executeJars(String jarFolderPath) {
-        ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                print("Tests are being executed...\n",
-                        ConsoleViewContentType.NORMAL_OUTPUT);
+        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Tests are being executed...");
         GeneralCommandLine commandLine = new GeneralCommandLine();
         //Detecting if the user has correctly installed TornadoVM
-        String sourceFile = TornadoSetting.getInstance().setVarFile;
+        String sourceFile = TornadoSettingState.getInstance().setVarsPath();
         commandLine.setExePath("/bin/sh");
         commandLine.addParameter("-c");
         commandLine.addParameter("source " + sourceFile + ";tornado --device");
@@ -216,9 +200,8 @@ public class ExecutionEngine {
                 return;
             }
         } catch (ExecutionException ignored) {
-            ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                    print("TornadoVM environment variable file is not set correctly.\n",
-                            ConsoleViewContentType.ERROR_OUTPUT);
+            MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing",
+                    "TornadoVM environment variable file is not set correctly.");
 
             return;
         }
@@ -239,11 +222,11 @@ public class ExecutionEngine {
     }
 
     private void runTornadoOnJar(String jarPath) {
-        String sourceFile = TornadoSetting.getInstance().setVarFile;
+        String sourceFile = TornadoSettingState.getInstance().setVarsPath();
         GeneralCommandLine commandLine = new GeneralCommandLine();
         commandLine.setExePath("/bin/sh");
         commandLine.addParameter("-c");
-        commandLine.addParameter("source " + sourceFile + ";tornado --debug -jar " + jarPath);
+        commandLine.addParameter("source " + sourceFile + ";tornado --debug --printKernel -jar " + jarPath);
         try {
             CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
             ProcessOutput output = handler.runProcess();
@@ -261,27 +244,28 @@ public class ExecutionEngine {
     private void printResults(String jarPath, boolean hasException, ProcessOutput output) {
         String javaPath = jarPath.substring(0, jarPath.lastIndexOf(".jar")) + ".java";
         ApplicationManager.getApplication().runReadAction(() -> {
-            String methodName = TornadoTWTask.psiMethodFormat(fileMethodMap.get(javaPath).getMethod());
+            String methodName = TornadoTWTask.psiMethodFormat(fileMethodMap.get(javaPath));
             if (hasException) {
-                ConsoleView consoleView = ConsoleOutputToolWindow.getConsoleView(project);
-                consoleView.print("["+  Instant.now() + "] " + methodName + ": " + output.getStderr(),
-                                ConsoleViewContentType.ERROR_OUTPUT);
-                consoleView.print("Test assigning values to variables using default values, ",ConsoleViewContentType.LOG_INFO_OUTPUT);
-                consoleView.printHyperlink("customise your assignments\n"
-                                , project -> Messages.showMessageDialog(project,
-                                        "This dialogue box will be reserved for the user to change the assigned value.",
-                                        "Dialog Title", Messages.getInformationIcon()));
-                consoleView.print("Please visit the TornadoVM docs for more info: " +
-                                        "https://tornadovm.readthedocs.io/en/latest/unsupported.html"+"\n"
-                                ,ConsoleViewContentType.LOG_INFO_OUTPUT);
-                consoleView.print("Got a bug? Report it to TornadoVM team: " +
-                                        "https://github.com/beehive-lab/TornadoVM/issues"+"\n",
-                                ConsoleViewContentType.LOG_INFO_OUTPUT);
+                MessageUtils consoleInstance = MessageUtils.getInstance(project);
+                consoleInstance.showErrorMsg("Dynamic Testing",methodName + ": " + output.getStderr());
+//                consoleInstance.showInfoMsg("Dynamic Testing",
+//                        "Test assigning values to variables using default values");
+//                consoleView.printHyperlink("customise your assignments\n"
+//                                , project -> Messages.showMessageDialog(project,
+//                                        "This dialogue box will be reserved for the user to change the assigned value.",
+//                                        "Dialog Title", Messages.getInformationIcon()));
+                consoleInstance.showInfoMsg("Dynamic Testing","Please visit the TornadoVM docs for more info: " +
+                                        "https://tornadovm.readthedocs.io/en/latest/unsupported.html"+"\n");
+                consoleInstance.showInfoMsg("Dynamic Testing","Got a bug? Report it to TornadoVM team: " +
+                                        "https://github.com/beehive-lab/TornadoVM/issues"+"\n");
             } else {
-                ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                        print(methodName + ": " + "Your method has no exceptions\n",
-                                ConsoleViewContentType.LOG_INFO_OUTPUT);
+                MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing",methodName + ": " + "Your method has no exceptions\n" );
+                MessageUtils.getInstance(project).showInfoMsg("OpenCL Kernel", output.getStdout());
             }
         });
+    }
+
+    private void getKernel(){
+
     }
 }

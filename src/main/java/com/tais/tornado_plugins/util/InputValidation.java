@@ -4,7 +4,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
@@ -12,11 +11,10 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.ProjectManager;
-import com.tais.tornado_plugins.ui.ConsoleOutputToolWindow;
+import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 /**
@@ -170,15 +168,14 @@ public class InputValidation {
         }
     }
 
-    public static boolean validateSourceFile(String path){
-        AtomicBoolean res = new AtomicBoolean(true);
-        ApplicationManager.getApplication().invokeLater(() -> {
-
+    public static Future<Boolean> validateSourceFile(String path){
+        return ApplicationManager.getApplication().executeOnPooledThread(()->{
             GeneralCommandLine commandLine = new GeneralCommandLine();
+            //Detecting if the user has correctly installed TornadoVM
+            String sourceFile = TornadoSettingState.getInstance().TornadoRoot;
             commandLine.setExePath("/bin/sh");
             commandLine.addParameter("-c");
-            commandLine.addParameter("source " + path);
-
+            commandLine.addParameter("source " + sourceFile + ";tornado --device");
             try {
                 CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
                 ProcessOutput output = handler.runProcess();
@@ -193,17 +190,22 @@ public class InputValidation {
                         }
                     });
                     Notifications.Bus.notify(notification);
-                    res.set(false);
+                    return false;
                 }
             } catch (ExecutionException ignored) {
-                ConsoleOutputToolWindow.getConsoleView(ProjectManager.getInstance().getOpenProjects()[0]).
-                        print("TornadoVM environment variable file is not set correctly.\n",
-                                ConsoleViewContentType.ERROR_OUTPUT);
-
-                res.set(false);
+                // TornadoVM is not properly installed on the user's machine
+                Notification notification = new Notification("Print", "TornadoVM not detected",
+                        "TornadoVM is not properly installed or configured", NotificationType.ERROR);
+                notification.addAction(new NotificationAction("How to install and configure TornadoVM") {
+                    @Override
+                    public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
+                        BrowserUtil.browse("https://tornadovm.readthedocs.io/en/latest/installation.html#");
+                    }
+                });
+                Notifications.Bus.notify(notification);
+                return false;
             }
+            return true;
         });
-
-        return res.get();
     }
 }

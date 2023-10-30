@@ -86,10 +86,11 @@
 
         </localInspection>
         <toolWindow factoryClass="com.tais.tornado_plugins.ui.TornadoToolsWindow" id="TornadoVM" anchor="right"/>
-        <applicationConfigurable instance="com.tais.tornado_plugins.ui.TornadoSettingConfiguration"/>
-        <applicationService serviceImplementation="com.tais.tornado_plugins.entity.TornadoSetting"/>
+        <applicationConfigurable instance="com.tais.tornado_plugins.ui.settings.TornadoSettingConfiguration"
+                                 displayName="TornadoVM"/>
+        <applicationService serviceImplementation="com.tais.tornado_plugins.ui.settings.TornadoSettingState"/>
         <psi.treeChangeListener implementation="com.tais.tornado_plugins.listener.PsiChangeListener"/>
-        <toolWindow factoryClass="com.tais.tornado_plugins.ui.ConsoleWindowFactory" id="Console" anchor="bottom"/>
+        <toolWindow factoryClass="com.tais.tornado_plugins.ui.console.ConsoleWindowFactory" id="Console" anchor="bottom"/>
     </extensions>
     <projectListeners>
         <listener class="com.tais.tornado_plugins.listener.ToolWindowOpen"

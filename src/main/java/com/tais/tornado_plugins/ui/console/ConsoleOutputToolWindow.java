@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.ui;
+package com.tais.tornado_plugins.ui.console;
 
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;

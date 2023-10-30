@@ -24,8 +24,8 @@ public class CodeGenerator {
             File file = creatFile(project, method, importCodeBlock, fileName, dir);
             methodFile.put(file.getAbsolutePath(), method);
         }
-        //ExecutionEngine executionEngine = new ExecutionEngine(project, dir.getAbsolutePath(), methodFile);
-        //executionEngine.run();
+        ExecutionEngine executionEngine = new ExecutionEngine(project, dir.getAbsolutePath(), methodFile);
+        executionEngine.run();
         dir.delete();
     }
 
@@ -44,6 +44,7 @@ public class CodeGenerator {
                 import uk.ac.manchester.tornado.api.annotations.Parallel;
                 import uk.ac.manchester.tornado.api.annotations.Reduce;
                 import uk.ac.manchester.tornado.api.enums.DataTransferMode;
+                import uk.ac.manchester.tornado.api.data.nativetypes.IntArray;
                 """;
         StringBuilder methodWithParameters = new StringBuilder();
         String methodWithClass = filename + "::" + method.getName();

@@ -3,6 +3,7 @@ package com.tais.tornado_plugins.mockExecution;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiType;
+import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -10,9 +11,11 @@ import java.util.Random;
 
 public class VariableInit {
 
-    public static int parameterSize = 32;
+    public static int parameterSize;
+
 
     public static String variableInitHelper(@NotNull PsiMethod method) {
+        parameterSize = TornadoSettingState.getInstance().parameterSize;
         ArrayList<String> parametersName = new ArrayList<>();
         ArrayList<String> parametersType = new ArrayList<>();
         for (PsiParameter parameter : method.getParameterList().getParameters()) {
@@ -36,12 +39,16 @@ public class VariableInit {
 
     //todo: add more datatype init;
     private static String lookupBoxedTypes(String type, String name, int size){
+        System.out.println(type);
         return switch (type) {
+            case "int" -> "=" + generateValueByType("Int") + ";";
+            case "float" -> "=" + generateValueByType("Float") + ";";
+            case "double" -> "=" + generateValueByType("Double") + ";";
             case "IntArray" -> "= new IntArray(" + size + ");" + name + ".init(" + generateValueByType("Int") + ");";
             case "DoubleArray" ->
                     "= new DoubleArray(" + size + ");" + name + ".init(" + generateValueByType("Double") + ");";
             case "FloatArray" ->
-                    "= new FloatArray(" + size + ");" + name + ".init(" + generateValueByType("Float") + ");";
+                    "= new FloatArray(" + size + ");" + name + ".init(" + generateValueByType("Float") + "f);";
             case "Matrix2DFloat", "Matrix2DDouble", "Matrix2DInt" -> matrix2DInit(type, name);
             default -> "";
         };
