@@ -57,4 +57,12 @@ public class TornadoSettingState implements PersistentStateComponent<TornadoSett
     public String setVarsPath(){
         return TornadoRoot + "/setvars.sh";
     }
+
+    public String getMatricesPath(){
+        return TornadoRoot + "/tornado-matrices/target/classes";
+    }
+
+    public String getApiPath(){
+        return TornadoRoot + "/tornado-api/target/classes";
+    }
 }

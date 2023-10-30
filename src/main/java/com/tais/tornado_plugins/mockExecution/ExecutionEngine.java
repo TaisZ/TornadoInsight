@@ -26,8 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -38,7 +36,6 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 public class ExecutionEngine {
-    private final String jars;
 
     private final String tempFolderPath;
 
@@ -50,44 +47,6 @@ public class ExecutionEngine {
         this.project = project;
         this.tempFolderPath = tempFolderPath;
         this.fileMethodMap = fileMethodMap;
-        String jar1 = extractResourceToFile("tornado-matrices-0.16.jar");
-        String jar2 = extractResourceToFile("tornado-api-0.16.jar");
-        jars = jar1 + ":" + jar2;
-    }
-
-    /**
-     * Extracts a resource from the current classpath (assuming it's encapsulated within a JAR)
-     * and writes it to a temporary file on the disk.
-     *
-     * @param resourceName The name of the resource to extract (e.g., "tornado-api-1.0.jar").
-     * @return A File object pointing to the extracted resource or null if the resource was not found.
-     * @throws IOException if there's an error during the extraction.
-     */
-    public String extractResourceToFile(String resourceName) {
-        // Use the class loader to get the resource's input stream
-        InputStream resourceStream = this.getClass().getClassLoader().getResourceAsStream(resourceName);
-        if (resourceStream == null) {
-            return null;
-        }
-        // Create a temporary file to store the resource
-        File tempFile = null;
-        try {
-            tempFile = File.createTempFile("extractedResource", ".jar");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        tempFile.deleteOnExit();  // Ensure the temporary file is deleted when the JVM exits
-        // Copy content from the resource stream to the temporary file
-        try (OutputStream outStream = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = resourceStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return tempFile.getAbsolutePath();
     }
 
     public void run() {
@@ -98,7 +57,7 @@ public class ExecutionEngine {
         application.executeOnPooledThread(() -> {
             ArrayList<String> files = new ArrayList<>(fileMethodMap.keySet());
             try {
-                compile(jars, tempFolderPath, files);
+                compile(tempFolderPath, files);
                 packFolder(tempFolderPath, tempFolderPath);
                 executeJars(tempFolderPath);
             } catch (ExecutionException | IOException e) {
@@ -115,20 +74,17 @@ public class ExecutionEngine {
         return null;  // Consider throwing an exception if no appropriate JDK is found.
     }
 
-    private void compile(String classpath, String outputDir, ArrayList<String> javaFiles) throws ExecutionException {
-        //String javacPath = getJavacPath(ProjectManager.getInstance().getDefaultProject());
-//            if (javacPath == null) {
-//                throw new IllegalStateException("Javac path not found!");
-//            }
+    private void compile(String outputDir, ArrayList<String> javaFiles) throws ExecutionException {
         MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Compiling test files...");
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setExePath("javac");
+        System.out.println(TornadoSettingState.getInstance().Java21);
+        commandLine.setExePath(TornadoSettingState.getInstance().Java21 + "/javac");
         commandLine.addParameter("--release");
         commandLine.addParameter("21");
         commandLine.addParameter("--enable-preview");
         commandLine.addParameter("-g");
         commandLine.addParameter("-classpath");
-        commandLine.addParameter(classpath);
+        commandLine.addParameter(TornadoSettingState.getInstance().getApiPath()+ File.pathSeparator + TornadoSettingState.getInstance().getMatricesPath()) ;
         commandLine.addParameter("-d");
         commandLine.addParameter(outputDir);
         commandLine.addParameters(javaFiles);  // Adds each Java file to the command line
@@ -263,9 +219,5 @@ public class ExecutionEngine {
                 MessageUtils.getInstance(project).showInfoMsg("OpenCL Kernel", output.getStdout());
             }
         });
-    }
-
-    private void getKernel(){
-
     }
 }

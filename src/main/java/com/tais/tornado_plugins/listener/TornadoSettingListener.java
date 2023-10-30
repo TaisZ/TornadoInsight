@@ -15,7 +15,7 @@ public class TornadoSettingListener implements ProjectManagerListener {
 
     @Override
     public void projectOpened(@NotNull Project project) {
-        if (TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
+        if (!TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
 //            if (InputValidation.validateSourceFile(TornadoSetting.getInstance().setVarFile)){
 //                TornadoSetting.getInstance().setVarFile = null;
 //            }
@@ -30,7 +30,7 @@ public class TornadoSettingListener implements ProjectManagerListener {
         }
     }
 
-    static class OpenTornadoSettingAction extends NotificationAction {
+     static class OpenTornadoSettingAction extends NotificationAction {
 
         public OpenTornadoSettingAction() {
             super("Configure TornadoVM");
