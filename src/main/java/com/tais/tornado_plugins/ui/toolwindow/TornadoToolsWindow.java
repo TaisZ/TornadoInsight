@@ -14,7 +14,6 @@ import javax.swing.*;
 public class TornadoToolsWindow implements ToolWindowFactory {
     private static JList list;
     private static DefaultListModel<String> listModel;
-    private static DefaultListModel<String> inspectorListModel;
     private static TornadoVM toolsWindow;
 
     @Override
@@ -22,13 +21,11 @@ public class TornadoToolsWindow implements ToolWindowFactory {
         toolsWindow = new TornadoVM(toolWindow);
         list = toolsWindow.getTasksList();
         listModel = (DefaultListModel<String>) list.getModel();
-        inspectorListModel = (DefaultListModel<String>) toolsWindow.getInspectorList().getModel();
         Content content = ContentFactory.getInstance().
                 createContent(toolsWindow.getMainPanel(), "", false);
         toolWindow.getContentManager().addContent(content);
         ToolWindowOpen.RefreshListener.init(project.getMessageBus());
         TornadoTWTask.addTask(project, listModel);
-        TornadoTWTask.updateInspectorList(inspectorListModel);
     }
 
     public static DefaultListModel<String> getListModel() {

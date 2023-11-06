@@ -1,7 +1,5 @@
 package com.tais.tornado_plugins.util;
 
-import com.intellij.codeInspection.LocalInspectionEP;
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -74,22 +72,6 @@ public class TornadoTWTask {
         }
         TornadoToolsWindow.getList().repaint();
     }
-
-    /**
-     * Updates the inspection list with custom inspections related to the TornadoVM.
-     *
-     * @param model the list model for UI to which inspections should be added
-     */
-    public static void updateInspectorList(DefaultListModel model) {
-        List<LocalInspectionEP> inspections = LocalInspectionEP.LOCAL_INSPECTION.getExtensionList();
-        for (LocalInspectionEP inspectionEP : inspections) {
-            if (inspectionEP.implementationClass.startsWith("com.tais.tornado_plugins")) {
-                LocalInspectionToolWrapper tool = new LocalInspectionToolWrapper(inspectionEP);
-                model.addElement(tool.getDisplayName());
-            }
-        }
-    }
-
     /**
      * Finds methods in the given PsiFile that are annotated with TornadoVM related annotations.
      *

@@ -3,6 +3,7 @@ package com.tais.tornado_plugins.ui.toolwindow;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.components.JBScrollPane;
 import com.tais.tornado_plugins.service.TWTasksButtonEvent;
 
 import javax.swing.*;
@@ -28,6 +29,7 @@ public class TornadoVM extends SimpleToolWindowPanel {
     private JList inspectorList;
     private JButton button1;
     private JScrollPane JscrollPane1;
+    private JScrollPane inspectorScrollPane;
 
     /**
      * Constructs a new TornadoVM toolwindow UI instance and initializes its components.
@@ -43,8 +45,6 @@ public class TornadoVM extends SimpleToolWindowPanel {
         tasksList.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
         button1.setText("Applying TornadoVM Dynamic Inspection");
         button1.addActionListener(e -> service.pressButton(toolWindow.getProject()));
-        DefaultListModel<String> inspectorListModel = new DefaultListModel<>();
-        inspectorList.setModel(inspectorListModel);
     }
 
     public JList getInspectorList() {
@@ -57,5 +57,9 @@ public class TornadoVM extends SimpleToolWindowPanel {
 
     public JList getTasksList() {
         return tasksList;
+    }
+
+    private void createUIComponents() {
+        inspectorScrollPane = new JBScrollPane(InspectorInfoKt.inspectorPane());
     }
 }
