@@ -84,7 +84,8 @@ public class ExecutionEngine {
         commandLine.addParameter("--enable-preview");
         commandLine.addParameter("-g");
         commandLine.addParameter("-classpath");
-        commandLine.addParameter(TornadoSettingState.getInstance().getApiPath()+ File.pathSeparator + TornadoSettingState.getInstance().getMatricesPath()) ;
+        commandLine.addParameter(TornadoSettingState.getInstance().getApiPath()+
+                File.pathSeparator + TornadoSettingState.getInstance().getMatricesPath()) ;
         commandLine.addParameter("-d");
         commandLine.addParameter(outputDir);
         commandLine.addParameters(javaFiles);  // Adds each Java file to the command line

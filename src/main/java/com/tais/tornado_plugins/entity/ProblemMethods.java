@@ -41,6 +41,7 @@ public class ProblemMethods {
      * @param method The PSI representation of the problematic method.
      */
     public void addMethod(PsiMethod method) {
+
         if (methodSet.add(method.getText())) {
             ProjectManager.getInstance().getOpenProjects()[0].getMessageBus().
                     syncPublisher(TornadoTaskRefreshListener.TOPIC).refresh();

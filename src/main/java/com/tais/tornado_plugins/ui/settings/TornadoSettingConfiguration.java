@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class TornadoSettingConfiguration implements Configurable {
     private TornadoSettingsComponent mySettingsComponent;
@@ -33,6 +34,10 @@ public class TornadoSettingConfiguration implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
+        String error = mySettingsComponent.isValidPath();
+        if (!Objects.equals(error, "")){
+            throw new ConfigurationException(error);
+        }
         TornadoSettingState settings = TornadoSettingState.getInstance();
         settings.TornadoRoot = mySettingsComponent.getTornadoEnvPath();
         settings.Java21 = mySettingsComponent.getJava21Path();

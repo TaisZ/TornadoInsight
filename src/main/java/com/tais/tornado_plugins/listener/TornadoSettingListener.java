@@ -15,6 +15,7 @@ public class TornadoSettingListener implements ProjectManagerListener {
 
     @Override
     public void projectOpened(@NotNull Project project) {
+        //todo:validate the settings file path
         if (!TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
 //            if (InputValidation.validateSourceFile(TornadoSetting.getInstance().setVarFile)){
 //                TornadoSetting.getInstance().setVarFile = null;
