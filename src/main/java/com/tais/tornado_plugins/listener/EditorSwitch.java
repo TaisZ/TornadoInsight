@@ -3,7 +3,7 @@ package com.tais.tornado_plugins.listener;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.tais.tornado_plugins.ui.TornadoToolsWindow;
+import com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.jetbrains.annotations.NotNull;
 

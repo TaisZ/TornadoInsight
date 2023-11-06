@@ -85,7 +85,7 @@
                          enabledByDefault="true">
 
         </localInspection>
-        <toolWindow factoryClass="com.tais.tornado_plugins.ui.TornadoToolsWindow" id="TornadoVM" anchor="right"/>
+        <toolWindow factoryClass="com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow" id="TornadoVM" anchor="right"/>
         <applicationConfigurable instance="com.tais.tornado_plugins.ui.settings.TornadoSettingConfiguration"
                                  displayName="TornadoVM"/>
         <applicationService serviceImplementation="com.tais.tornado_plugins.ui.settings.TornadoSettingState"/>

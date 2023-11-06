@@ -15,15 +15,7 @@ public class TornadoSettingListener implements ProjectManagerListener {
 
     @Override
     public void projectOpened(@NotNull Project project) {
-        //todo:validate the settings file path
-        if (!TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
-//            if (InputValidation.validateSourceFile(TornadoSetting.getInstance().setVarFile)){
-//                TornadoSetting.getInstance().setVarFile = null;
-//            }
-//            Future<Boolean> validationFuture = InputValidation.validateSourceFile(TornadoSettingState.getInstance().TornadoRoot);
-        return;
-
-        }else {
+        if (TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
             Notification notification = new Notification("Print", "TornadoVM",
                     "Please configure the TornadoVM environment variable file", NotificationType.INFORMATION);
             notification.addAction(new OpenTornadoSettingAction());

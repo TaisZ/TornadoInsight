@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.mockExecution;
+package com.tais.tornado_plugins.dynamicInspection;
 
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;

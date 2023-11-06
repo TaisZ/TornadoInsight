@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.ui;
+package com.tais.tornado_plugins.ui.toolwindow;
 
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.wm.ToolWindow;
@@ -43,7 +43,6 @@ public class TornadoVM extends SimpleToolWindowPanel {
         tasksList.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
         button1.setText("Applying TornadoVM Dynamic Inspection");
         button1.addActionListener(e -> service.pressButton(toolWindow.getProject()));
-
         DefaultListModel<String> inspectorListModel = new DefaultListModel<>();
         inspectorList.setModel(inspectorListModel);
     }
@@ -59,5 +58,4 @@ public class TornadoVM extends SimpleToolWindowPanel {
     public JList getTasksList() {
         return tasksList;
     }
-
 }

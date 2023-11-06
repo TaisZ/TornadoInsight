@@ -17,7 +17,7 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
-import com.tais.tornado_plugins.ui.TornadoToolsWindow;
+import com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow;
 
 import javax.swing.*;
 import java.util.ArrayList;

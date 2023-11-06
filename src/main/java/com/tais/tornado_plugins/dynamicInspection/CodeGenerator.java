@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.mockExecution;
+package com.tais.tornado_plugins.dynamicInspection;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;

@@ -5,7 +5,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.util.messages.MessageBus;
 import com.tais.tornado_plugins.message.TornadoTaskRefreshListener;
-import com.tais.tornado_plugins.ui.TornadoToolsWindow;
+import com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.jetbrains.annotations.NotNull;
 
