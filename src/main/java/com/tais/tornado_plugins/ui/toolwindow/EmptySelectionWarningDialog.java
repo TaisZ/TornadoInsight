@@ -2,6 +2,7 @@ package com.tais.tornado_plugins.ui.toolwindow;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
+import com.tais.tornado_plugins.util.MessageBundle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -31,6 +32,6 @@ public class EmptySelectionWarningDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         // Returns a label informing the user to select a TornadoVM Task
-        return new JBLabel("Please select at least one Tornado task!");
+        return new JBLabel(MessageBundle.message("ui.dialog.emptySelection"));
     }
 }

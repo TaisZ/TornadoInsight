@@ -12,6 +12,7 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UI;
+import com.tais.tornado_plugins.util.MessageBundle;
 
 import javax.swing.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,18 +39,19 @@ public class TornadoSettingsComponent {
                 });
 
 
-        String INNER_COMMENT = "<p>The environment variable file for TornadoVM is usually \\\"TornadoVM/setvars.sh\\\"." +
-                "This file allows the plugin to call your host's TornadoVM for further analysis of Tornado methods.</p>";
+        String INNER_COMMENT = MessageBundle.message("ui.settings.comment.env");
 
         JPanel innerGrid = UI.PanelFactory.grid().splitColumns()
-                .add(UI.PanelFactory.panel(myTornadoEnv).withLabel("TornadoVM root: "))
-                .add(UI.PanelFactory.panel(myJava21Path).withLabel("Path to Java 21: "))
+                .add(UI.PanelFactory.panel(myTornadoEnv).withLabel(MessageBundle.message("ui.settings.label.tornado")))
+                .add(UI.PanelFactory.panel(myJava21Path).withLabel(MessageBundle.message("ui.settings.label.java")))
                 .createPanel();
 
         JPanel panel = UI.PanelFactory.panel(innerGrid).withComment(INNER_COMMENT).createPanel();
-        panel.setBorder(IdeBorderFactory.createTitledBorder("TornadoVM Runtime"));
-        JPanel Java21 = UI.PanelFactory.panel(myParameterSize).withLabel("Parameter size: ").withComment("<p>Parameter size</p>").createPanel();
-        Java21.setBorder(IdeBorderFactory.createTitledBorder("Dynamic Inspection"));
+        panel.setBorder(IdeBorderFactory.createTitledBorder(MessageBundle.message("ui.settings.group.runtime")));
+        JPanel Java21 = UI.PanelFactory.panel(myParameterSize)
+                .withLabel(MessageBundle.message("ui.setting.label.size"))
+                .withComment(MessageBundle.message("ui.settings.comment.size")).createPanel();
+        Java21.setBorder(IdeBorderFactory.createTitledBorder(MessageBundle.message("ui.settings.group.dynamic")));
 
 
         myMainPanel = FormBuilder.createFormBuilder()
@@ -96,9 +98,9 @@ public class TornadoSettingsComponent {
         AtomicReference<String> stringAtomicReference = new AtomicReference<>();
         stringAtomicReference.set("");
         if (StringUtil.isEmpty(path))
-            return "Empty TornadoVM Path";
+            return MessageBundle.message("ui.settings.validation.emptyTornadovm");
         if (StringUtil.isEmpty(JavaPath))
-            return "Empty Java Path";
+            return MessageBundle.message("ui.settings.validation.emptyJava");
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
             GeneralCommandLine commandLine = new GeneralCommandLine();
@@ -109,10 +111,10 @@ public class TornadoSettingsComponent {
                 CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
                 ProcessOutput output = handler.runProcess();
                 if (output.getExitCode() != 0) {
-                    stringAtomicReference.set("Invalid TornadoVM path");
+                    stringAtomicReference.set(MessageBundle.message("ui.settings.validation.invalidTornadovm"));
                 }
             } catch (Exception e) {
-                stringAtomicReference.set("Invalid TornadoVM path!");
+                stringAtomicReference.set(MessageBundle.message("ui.settings.validation.invalidTornadovm"));
             }
 
             commandLine = new GeneralCommandLine();
@@ -121,12 +123,12 @@ public class TornadoSettingsComponent {
             try {
                 ProcessOutput processOutput = ExecUtil.execAndGetOutput(commandLine);
                 if (!processOutput.toString().contains("java version \"21\"")) {
-                    stringAtomicReference.set("Java version is not 21");
+                    stringAtomicReference.set(MessageBundle.message("ui.settings.validation.javaVersion"));
                 }
             } catch (Exception e) {
-                stringAtomicReference.set("Invalid Java path!");
+                stringAtomicReference.set(MessageBundle.message("ui.settings.validation.invalidJava"));
             }
-        }, "Validating..", true, null);
+        }, MessageBundle.message("ui.settings.validation.progress"), true, null);
         return stringAtomicReference.get();
     }
 }

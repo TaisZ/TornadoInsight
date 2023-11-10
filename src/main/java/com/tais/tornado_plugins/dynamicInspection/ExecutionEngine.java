@@ -15,6 +15,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
+import com.tais.tornado_plugins.util.MessageBundle;
 import com.tais.tornado_plugins.util.MessageUtils;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +50,8 @@ public class ExecutionEngine {
     public void run(){
         // Performing UI related operations on a non-EDT is not allowed.
         // To ensure that the code executes on EDT, need use Application.invokeLater().
-        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Starting Test...");
+        MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
+                MessageBundle.message("dynamic.info.start"));
         Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
             ArrayList<String> files = new ArrayList<>(fileMethodMap.keySet());
             try {
@@ -63,7 +65,8 @@ public class ExecutionEngine {
     }
 
     private void compile(String outputDir, ArrayList<String> javaFiles) throws ExecutionException {
-        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Compiling test files...");
+        MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
+                MessageBundle.message("dynamic.info.compile"));
         GeneralCommandLine commandLine = new GeneralCommandLine();
         commandLine.setExePath(TornadoSettingState.getInstance().Java21 + "/javac");
         commandLine.addParameter("--release");
@@ -81,14 +84,14 @@ public class ExecutionEngine {
         try {
             ExecUtil.execAndGetOutput(commandLine);
         } catch (ExecutionException e) {
-            MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing",
-                    "Compilation failure, may be JAVA_HOME is not correctly identified or " +
-                    "there are temporarily unsupported data types");
+            MessageUtils.getInstance(project).showErrorMsg(MessageBundle.message("dynamic.info.title"),
+                    MessageBundle.message("dynamic.error.compile"));
         }
     }
 
     private void packFolder(String classFolderPath, String outputFolderPath) throws IOException {
-        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Packing test files...");
+        MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
+                MessageBundle.message("dynamic.info.packing"));
         File classFolder = new File(classFolderPath);
         File[] classFiles = classFolder.listFiles((dir, name) -> name.endsWith(".class"));
         if (classFiles == null) {
@@ -114,13 +117,15 @@ public class ExecutionEngine {
                 Files.copy(classPath, jos);
                 jos.closeEntry();
             } catch (IOException e) {
-                MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing", "Failed to package test files");
+                MessageUtils.getInstance(project).showErrorMsg(MessageBundle.message("dynamic.info.title"),
+                        MessageBundle.message("dynamic.error.packing"));
             }
         }
     }
 
     private void executeJars(String jarFolderPath) {
-        MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Tests are being executed...");
+        MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
+                MessageBundle.message("dynamic.info.execution"));
         GeneralCommandLine commandLine = new GeneralCommandLine();
         //Detecting if the user has correctly installed TornadoVM
         String sourceFile = TornadoSettingState.getInstance().setVarsPath();
@@ -144,7 +149,7 @@ public class ExecutionEngine {
                 return;
             }
         } catch (ExecutionException ignored) {
-            MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing",
+            MessageUtils.getInstance(project).showErrorMsg(MessageBundle.message("dynamic.info.title"),
                     "TornadoVM environment variable file is not set correctly.");
 
             return;
@@ -191,20 +196,19 @@ public class ExecutionEngine {
             String methodName = TornadoTWTask.psiMethodFormat(fileMethodMap.get(javaPath));
             if (hasException) {
                 MessageUtils consoleInstance = MessageUtils.getInstance(project);
-                consoleInstance.showErrorMsg("Dynamic Testing",methodName + ": " + output.getStderr());
+                consoleInstance.showErrorMsg(MessageBundle.message("dynamic.info.title"),methodName + ": " + output.getStderr());
 //                consoleInstance.showInfoMsg("Dynamic Testing",
 //                        "Test assigning values to variables using default values");
 //                consoleView.printHyperlink("customise your assignments\n"
 //                                , project -> Messages.showMessageDialog(project,
 //                                        "This dialogue box will be reserved for the user to change the assigned value.",
 //                                        "Dialog Title", Messages.getInformationIcon()));
-                consoleInstance.showInfoMsg("Dynamic Testing","Please visit the TornadoVM docs for more info: " +
-                                        "https://tornadovm.readthedocs.io/en/latest/unsupported.html"+"\n");
-                consoleInstance.showInfoMsg("Dynamic Testing","Got a bug? Report it to TornadoVM team: " +
-                                        "https://github.com/beehive-lab/TornadoVM/issues"+"\n");
+                consoleInstance.showInfoMsg(MessageBundle.message("dynamic.info.title"),MessageBundle.message("dynamic.info.documentation"));
+                consoleInstance.showInfoMsg(MessageBundle.message("dynamic.info.title"),MessageBundle.message("dynamic.info.bug"));
             } else {
-                MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing",methodName + ": " + "Your method has no exceptions\n" );
-                MessageUtils.getInstance(project).showInfoMsg("OpenCL Kernel", output.getStdout());
+                MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
+                        methodName + ": " + MessageBundle.message("dynamic.info.noException") );
+                MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.opencl"), output.getStdout());
             }
         });
     }

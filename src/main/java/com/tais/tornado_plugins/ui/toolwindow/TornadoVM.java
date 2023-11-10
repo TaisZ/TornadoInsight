@@ -5,6 +5,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.tais.tornado_plugins.service.TWTasksButtonEvent;
+import com.tais.tornado_plugins.util.MessageBundle;
 
 import javax.swing.*;
 
@@ -40,9 +41,9 @@ public class TornadoVM extends SimpleToolWindowPanel {
         TWTasksButtonEvent service = new TWTasksButtonEvent();
         DefaultListModel<String> defaultListModel = new DefaultListModel<>();
         tasksList.setModel(defaultListModel);
-        tasksList.getEmptyText().setText("No TornadoVM task detected");
+        tasksList.getEmptyText().setText(MessageBundle.message("ui.toolwindow.defaultText"));
         tasksList.setSelectionMode(MULTIPLE_INTERVAL_SELECTION);
-        button1.setText("Applying TornadoVM Dynamic Inspection");
+        button1.setText(MessageBundle.message("ui.toolwindow.button"));
         button1.addActionListener(e -> service.pressButton(toolWindow.getProject()));
     }
 
