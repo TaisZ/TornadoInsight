@@ -11,12 +11,8 @@ import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdkType;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import com.tais.tornado_plugins.util.MessageUtils;
@@ -30,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Future;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -49,35 +46,25 @@ public class ExecutionEngine {
         this.fileMethodMap = fileMethodMap;
     }
 
-    public void run() {
+    public void run(){
         // Performing UI related operations on a non-EDT is not allowed.
         // To ensure that the code executes on EDT, need use Application.invokeLater().
-        Application application = ApplicationManager.getApplication();
         MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Starting Test...");
-        application.executeOnPooledThread(() -> {
+        Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
             ArrayList<String> files = new ArrayList<>(fileMethodMap.keySet());
             try {
                 compile(tempFolderPath, files);
                 packFolder(tempFolderPath, tempFolderPath);
                 executeJars(tempFolderPath);
-            } catch (ExecutionException | IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
-    private String getJavacPath(Project project) {
-        Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
-        if (sdk != null && sdk.getSdkType() instanceof JavaSdkType) {
-            return ((JavaSdkType) sdk.getSdkType()).getBinPath(sdk) + (System.getProperty("os.name").startsWith("Win") ? "\\javac.exe" : "/javac");
-        }
-        return null;  // Consider throwing an exception if no appropriate JDK is found.
-    }
-
     private void compile(String outputDir, ArrayList<String> javaFiles) throws ExecutionException {
         MessageUtils.getInstance(project).showInfoMsg("Dynamic Testing", "Compiling test files...");
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        System.out.println(TornadoSettingState.getInstance().Java21);
         commandLine.setExePath(TornadoSettingState.getInstance().Java21 + "/javac");
         commandLine.addParameter("--release");
         commandLine.addParameter("21");
@@ -92,7 +79,7 @@ public class ExecutionEngine {
 
         // Execute the command
         try {
-            System.out.println(ExecUtil.execAndGetOutput(commandLine));
+            ExecUtil.execAndGetOutput(commandLine);
         } catch (ExecutionException e) {
             MessageUtils.getInstance(project).showErrorMsg("Dynamic Testing",
                     "Compilation failure, may be JAVA_HOME is not correctly identified or " +
@@ -105,7 +92,7 @@ public class ExecutionEngine {
         File classFolder = new File(classFolderPath);
         File[] classFiles = classFolder.listFiles((dir, name) -> name.endsWith(".class"));
         if (classFiles == null) {
-            System.out.println("No .class files found in the specified input folder.");
+            //System.out.println("No .class files found in the specified input folder.");
             return;
         }
 

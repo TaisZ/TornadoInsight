@@ -25,7 +25,6 @@ public class TornadoVM extends SimpleToolWindowPanel {
     private JPanel taskPanel;
     private JBList tasksList;
     private JPanel inspectorPanel;
-    private JButton inspectionApply;
     private JList inspectorList;
     private JButton button1;
     private JScrollPane JscrollPane1;
