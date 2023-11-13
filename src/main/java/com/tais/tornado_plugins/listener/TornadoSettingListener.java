@@ -15,7 +15,7 @@ public class TornadoSettingListener implements ProjectManagerListener {
 
     @Override
     public void projectOpened(@NotNull Project project) {
-        if (TornadoSettingState.getInstance().TornadoRoot.isEmpty()) {
+        if (TornadoSettingState.getInstance().TornadoRoot == null) {
             Notification notification = new Notification("Print", "TornadoVM",
                     "Please configure the TornadoVM environment variable file", NotificationType.INFORMATION);
             notification.addAction(new OpenTornadoSettingAction());

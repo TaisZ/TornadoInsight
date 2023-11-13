@@ -34,11 +34,13 @@ public class TornadoSettingConfiguration implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
+        TornadoSettingState settings = TornadoSettingState.getInstance();
         String error = mySettingsComponent.isValidPath();
         if (!Objects.equals(error, "")){
+            settings.isValid = false;
             throw new ConfigurationException(error);
         }
-        TornadoSettingState settings = TornadoSettingState.getInstance();
+        settings.isValid = true;
         settings.TornadoRoot = mySettingsComponent.getTornadoEnvPath();
         settings.Java21 = mySettingsComponent.getJava21Path();
         settings.parameterSize = mySettingsComponent.getParameterSize();

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ConsoleWindowFactory implements ToolWindowFactory, DumbAware {
 
-        public static String ID = "Console";
+        public static String ID = "TornadoInsight Console";
 
         @Override
         public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
@@ -24,8 +24,8 @@ public class ConsoleWindowFactory implements ToolWindowFactory, DumbAware {
         }
 
         public static DataContext getDataContext(@NotNull Project project) {
-            ToolWindow leetcodeToolWindows = ToolWindowManager.getInstance(project).getToolWindow(ID);
-            ConsolePanel consolePanel = (ConsolePanel) leetcodeToolWindows.getContentManager().getContent(0).getComponent();
+            ToolWindow consoleToolWindows = ToolWindowManager.getInstance(project).getToolWindow(ID);
+            ConsolePanel consolePanel = (ConsolePanel) consoleToolWindows.getContentManager().getContent(0).getComponent();
             return DataManager.getInstance().getDataContext(consolePanel);
         }
 

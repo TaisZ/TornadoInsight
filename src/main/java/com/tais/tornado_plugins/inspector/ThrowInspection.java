@@ -13,6 +13,7 @@ import com.intellij.psi.PsiThrowStatement;
 import com.intellij.psi.PsiTryStatement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
+import com.tais.tornado_plugins.util.MessageBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -56,7 +57,7 @@ public class ThrowInspection extends AbstractBaseJavaLocalInspectionTool {
                             if (!reportedStatement.contains(statement)) {
                                 ProblemMethods.getInstance().addMethod(parent);
                                 holder.registerProblem(statement,
-                                        "TornadoVM dose not support for Traps/Exceptions",
+                                        MessageBundle.message("inspection.traps.throw"),
                                         ProblemHighlightType.ERROR);
                                 reportedStatement.add(statement);
                             }
@@ -68,17 +69,15 @@ public class ThrowInspection extends AbstractBaseJavaLocalInspectionTool {
                             super.visitTryStatement(statement);
                             ProblemMethods.getInstance().addMethod(parent);
                             holder.registerProblem(statement,
-                                    "TornadoVM: TornadoVM dose not support for Traps/Exceptions." +
-                                            "The code block in Catch will be ignored, and the exception " +
-                                            "that may be thrown in Try block will not be handled",
+                                    MessageBundle.message("inspection.traps.tryCatch"),
                                     ProblemHighlightType.ERROR);
                         }
                     });
                     // Checking the method signature for thrown exceptions
                     if (!reportedMethod.contains(parent)) {
                         for (PsiClassType exception : parent.getThrowsList().getReferencedTypes()) {
-                            holder.registerProblem(parent.getThrowsList(), "TornadoVM: Incompatible thrown types " +
-                                            "Exception in functional expression\n " + exception.getCanonicalText(),
+                            holder.registerProblem(parent.getThrowsList(),
+                                    MessageBundle.message("inspection.traps.throws")+ "\n" + exception.getCanonicalText(),
                                     ProblemHighlightType.ERROR);
                             ProblemMethods.getInstance().addMethod(parent);
                         }

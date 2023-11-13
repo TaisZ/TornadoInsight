@@ -19,8 +19,8 @@ public class TornadoSettingState implements PersistentStateComponent<TornadoSett
     // File path for the TornadoVM environment variable file.
     public String TornadoRoot;
     public String Java21;
-
     public int parameterSize;
+    public boolean isValid;
 
     /**
      * Retrieves the singleton instance of the TornadoSetting.
