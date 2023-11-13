@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ConsoleWindowFactory implements ToolWindowFactory, DumbAware {
 
-        public static String ID = "TornadoInsight";
+        public static String ID = "TornadoInsight Console";
 
         @Override
         public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {

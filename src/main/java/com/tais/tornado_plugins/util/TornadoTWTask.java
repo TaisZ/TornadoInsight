@@ -1,23 +1,20 @@
 package com.tais.tornado_plugins.util;
 
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiImportList;
-import com.intellij.psi.PsiImportStatement;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
 import com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow;
 
 import javax.swing.*;
+import javax.xml.datatype.DatatypeConstants;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +44,7 @@ public class TornadoTWTask {
      * @param project the IntelliJ project
      * @param model the list model to which tasks should be added
      */
-    public synchronized static void addTask(Project project, DefaultListModel<String> model) {
+    public static void addTask(Project project, DefaultListModel<String> model) {
         //ToolWindow maybe created before the Psi index,
         // so when the Psi index is not finished creating, skip
         if (DumbService.isDumb(project) || model == null) return;
@@ -57,7 +54,6 @@ public class TornadoTWTask {
 
         PsiManagerImpl manager = new PsiManagerImpl(project);
         if (FileEditorManager.getInstance(project).getSelectedFiles().length == 0) return;
-
         PsiFile file = manager.findFile(Objects.requireNonNull(FileEditorManager.getInstance(project).getSelectedFiles()[0]));
         assert file != null;
         importCodeBlock = getImportCode(file);
@@ -70,8 +66,28 @@ public class TornadoTWTask {
                 model.addElement(displayName);
             }
         }
-        TornadoToolsWindow.getList().repaint();
+        //TornadoToolsWindow.getList().repaint();
     }
+
+    public static void refresh(Project project, VirtualFile virtualFile, DefaultListModel<String> model){
+        if (DumbService.isDumb(project) || model == null) return;
+        model.clear();
+        taskList = new ArrayList<>();
+        taskMap = new HashMap<>();
+        PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
+        assert file != null;
+        importCodeBlock = getImportCode(file);
+        taskList = findAnnotatedVariables(file);
+        if (taskList == null) return;
+        for (PsiMethod task : taskList) {
+            if (validateTask(task)) {
+                String displayName = psiMethodFormat(task);
+                taskMap.put(displayName, task);
+                model.addElement(displayName);
+            }
+        }
+    }
+
     /**
      * Finds methods in the given PsiFile that are annotated with TornadoVM related annotations.
      *
@@ -118,7 +134,7 @@ public class TornadoTWTask {
      * @param methodsList the list of method names
      * @return a list of corresponding PsiMethod objects, or null if none found
      */
-    public static ArrayList<PsiMethod> getMethods(List<Object> methodsList) {
+    public static ArrayList<PsiMethod> getMethods(List<String> methodsList) {
         if (methodsList == null || methodsList.isEmpty()) return null;
         ArrayList<PsiMethod> psiMethodsList = new ArrayList<>();
         for (Object method : methodsList) {
