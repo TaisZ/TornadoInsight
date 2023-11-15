@@ -61,7 +61,6 @@ public class CodeGenerator {
                 "        TornadoExecutionPlan executor = new TornadoExecutionPlan(immutableTaskGraph);\n" +
                 "        executor.withWarmUp();\n" +
                 "    }";
-        System.out.println(variableInit);
         MessageUtils.getInstance(project).showInfoMsg("Info",variableInit);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(javaFile))) {
             System.out.println(javaFile.getPath());

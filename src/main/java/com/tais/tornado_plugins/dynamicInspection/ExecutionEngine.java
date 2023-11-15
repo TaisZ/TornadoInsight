@@ -12,8 +12,12 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.encoding.ChangeFileEncodingAction;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import com.tais.tornado_plugins.util.MessageBundle;
@@ -21,6 +25,7 @@ import com.tais.tornado_plugins.util.MessageUtils;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,10 +47,13 @@ public class ExecutionEngine {
 
     private final Project project;
 
+    private boolean success;
+
     public ExecutionEngine(Project project, String tempFolderPath, HashMap<String, PsiMethod> fileMethodMap) {
         this.project = project;
         this.tempFolderPath = tempFolderPath;
         this.fileMethodMap = fileMethodMap;
+        this.success = false;
     }
 
     public void run(){
@@ -53,15 +61,19 @@ public class ExecutionEngine {
         // To ensure that the code executes on EDT, need use Application.invokeLater().
         MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
                 MessageBundle.message("dynamic.info.start"));
+        long startTime = System.currentTimeMillis();
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             ArrayList<String> files = new ArrayList<>(fileMethodMap.keySet());
             try {
                 compile(tempFolderPath, files);
                 packFolder(tempFolderPath, tempFolderPath);
                 executeJars(tempFolderPath);
-            } catch (Exception e) {
+            }catch (UnsupportedOperationException ignore){}
+            catch (Exception e) {
                 throw new RuntimeException(e);
             }finally {
+                long runningTime = System.currentTimeMillis() - startTime;
+                showStatDialog(runningTime);
                 cleanUp();
             }
         });
@@ -85,20 +97,24 @@ public class ExecutionEngine {
 
         // Execute the command
         try {
-            ExecUtil.execAndGetOutput(commandLine);
+            int exitCode = ExecUtil.execAndGetOutput(commandLine).getExitCode();
+            if (exitCode == 1) {
+                MessageUtils.getInstance(project).showErrorMsg(MessageBundle.message("dynamic.info.title"),
+                        MessageBundle.message("dynamic.error.compile"));
+                throw new UnsupportedOperationException(MessageBundle.message("dynamic.error.compile"));
+            }
         } catch (ExecutionException e) {
             MessageUtils.getInstance(project).showErrorMsg(MessageBundle.message("dynamic.info.title"),
                     MessageBundle.message("dynamic.error.compile"));
         }
     }
 
-    private void packFolder(String classFolderPath, String outputFolderPath) throws IOException {
+    private void packFolder(String classFolderPath, String outputFolderPath) {
         MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
                 MessageBundle.message("dynamic.info.packing"));
         File classFolder = new File(classFolderPath);
         File[] classFiles = classFolder.listFiles((dir, name) -> name.endsWith(".class"));
         if (classFiles == null) {
-            System.out.println("No .class files found in the specified input folder.");
             return;
         }
 
@@ -183,7 +199,6 @@ public class ExecutionEngine {
             CapturingProcessHandler handler = new CapturingProcessHandler(commandLine);
             ProcessOutput output = handler.runProcess();
             //Cannot use the exit code to determine if TornadoVM is running with an error or not.
-            System.out.println(output);
             // Under normal circumstances Tornado output will also have error output For example:
             // " WARNING: Using incubator modules: jdk.incubator.foreign, jdk.incubator.vector "
             printResults(jarPath, output.toString().contains("Exception"), output);
@@ -192,7 +207,7 @@ public class ExecutionEngine {
         }
     }
 
-    //Statistics of test results for each method
+    //Test results for each method
     private void printResults(String jarPath, boolean hasException, ProcessOutput output) {
         String javaPath = jarPath.substring(0, jarPath.lastIndexOf(".jar")) + ".java";
         ApplicationManager.getApplication().runReadAction(() -> {
@@ -200,12 +215,6 @@ public class ExecutionEngine {
             if (hasException) {
                 MessageUtils consoleInstance = MessageUtils.getInstance(project);
                 consoleInstance.showErrorMsg(MessageBundle.message("dynamic.info.title"),methodName + ": " + output.getStderr());
-//                consoleInstance.showInfoMsg("Dynamic Testing",
-//                        "Test assigning values to variables using default values");
-//                consoleView.printHyperlink("customise your assignments\n"
-//                                , project -> Messages.showMessageDialog(project,
-//                                        "This dialogue box will be reserved for the user to change the assigned value.",
-//                                        "Dialog Title", Messages.getInformationIcon()));
                 consoleInstance.showInfoMsg(MessageBundle.message("dynamic.info.title"),MessageBundle.message("dynamic.info.documentation"));
                 consoleInstance.showInfoMsg(MessageBundle.message("dynamic.info.title"),MessageBundle.message("dynamic.info.bug"));
             } else {
@@ -213,7 +222,17 @@ public class ExecutionEngine {
                         methodName + ": " + MessageBundle.message("dynamic.info.noException") );
                 MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.opencl"), output.getStdout());
             }
+            success = true;
         });
+    }
+
+    private void showStatDialog(long runningTime){
+        if (success){
+            Notification notification = new Notification("Print", MessageBundle.message("dynamic.info.statistics.title"),
+                    MessageBundle.message("dynamic.info.statistics.body") + " " + runningTime + "ms", NotificationType.INFORMATION);
+            notification.addAction(new ChangeParameterSize());
+            ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification, project));
+        }
     }
 
     private void cleanUp(){
@@ -222,6 +241,17 @@ public class ExecutionEngine {
             FileUtils.deleteDirectory(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static class ChangeParameterSize extends NotificationAction {
+        public ChangeParameterSize() {
+            super(MessageBundle.message("dynamic.parameterSize.button"));
+        }
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
+            ShowSettingsUtil.getInstance().showSettingsDialog(e.getProject(), "TornadoVM");
+            notification.expire();
         }
     }
 }
