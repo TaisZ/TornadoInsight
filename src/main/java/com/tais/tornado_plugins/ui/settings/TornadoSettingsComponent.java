@@ -116,13 +116,14 @@ public class TornadoSettingsComponent {
             } catch (Exception e) {
                 stringAtomicReference.set(MessageBundle.message("ui.settings.validation.invalidTornadovm"));
             }
-
+            //Validate is Java 21. The validation process needs update;
             commandLine = new GeneralCommandLine();
             commandLine.setExePath(JavaPath + "/java");
             commandLine.addParameter("-version");
             try {
                 ProcessOutput processOutput = ExecUtil.execAndGetOutput(commandLine);
-                if (!processOutput.toString().contains("java version \"21\"")) {
+                if (!processOutput.toString().contains("java version \"21\"")
+                        && !processOutput.toString().contains("GraalVM 21")) {
                     stringAtomicReference.set(MessageBundle.message("ui.settings.validation.javaVersion"));
                 }
                 TornadoSettingState.getInstance().isValid = true;

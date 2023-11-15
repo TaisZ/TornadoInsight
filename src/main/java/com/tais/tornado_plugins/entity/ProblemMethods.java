@@ -1,6 +1,9 @@
 package com.tais.tornado_plugins.entity;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.message.TornadoTaskRefreshListener;
 
@@ -40,11 +43,11 @@ public class ProblemMethods {
      *
      * @param method The PSI representation of the problematic method.
      */
-    public void addMethod(PsiMethod method) {
-
-        if (methodSet.add(method.getText())) {
-            ProjectManager.getInstance().getOpenProjects()[0].getMessageBus().
-                    syncPublisher(TornadoTaskRefreshListener.TOPIC).refresh();
+    public void addMethod(Project project, PsiFile file, PsiMethod method) {
+        VirtualFile virtualFile = file.getVirtualFile();
+        if (methodSet.add(method.getText()) && virtualFile != null) {
+            project.getMessageBus().
+                    syncPublisher(TornadoTaskRefreshListener.REFRESH_TOPIC).refresh(project, virtualFile);
         }
     }
 

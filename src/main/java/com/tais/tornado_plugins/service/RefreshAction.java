@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiManagerImpl;
+import com.tais.tornado_plugins.message.TornadoTaskRefreshListener;
 import com.tais.tornado_plugins.util.DataKeys;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +22,7 @@ public class RefreshAction extends AnAction{
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        TornadoTWTask.addTask(e.getProject(),
-                (DefaultListModel<String>) e.getData(DataKeys.TORNADOINSIGHT_LIST_MODEL)
-        );
-        Objects.requireNonNull(e.getData(DataKeys.TORNADO_LIST)).repaint();
+        Objects.requireNonNull(e.getProject()).getMessageBus().
+                syncPublisher(TornadoTaskRefreshListener.REFRESH_TOPIC).refresh();
     }
 }

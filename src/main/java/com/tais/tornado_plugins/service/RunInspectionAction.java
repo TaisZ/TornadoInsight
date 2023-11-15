@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.dynamicInspection.DynamicInspection;
 import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
-import com.tais.tornado_plugins.ui.toolwindow.EmptySelectionWarningDialog;
+import com.tais.tornado_plugins.ui.newtoolwindow.EmptySelectionWarningDialog;
 import com.tais.tornado_plugins.util.DataKeys;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.jetbrains.annotations.NotNull;

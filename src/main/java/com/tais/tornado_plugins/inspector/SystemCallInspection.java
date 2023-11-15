@@ -53,7 +53,7 @@ public class SystemCallInspection extends AbstractBaseJavaLocalInspectionTool {
                             if (method != null && method.hasModifierProperty(PsiModifier.NATIVE)) {
                                 // This method call is invoking a native method.
                                 // Handle or report as necessary.
-                                ProblemMethods.getInstance().addMethod(parent);
+                                ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                                 holder.registerProblem(expression,
                                         MessageBundle.message("inspection.nativeCall"),
                                         ProblemHighlightType.ERROR);
@@ -75,7 +75,7 @@ public class SystemCallInspection extends AbstractBaseJavaLocalInspectionTool {
                                     className.startsWith("java.nio")||
                                     className.startsWith("java.security")||
                                     className.startsWith("java.sql")) {
-                                ProblemMethods.getInstance().addMethod(parent);
+                                ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                                 holder.registerProblem(expression,
                                         MessageBundle.message("inspection.external"),
                                         ProblemHighlightType.ERROR);

@@ -1,7 +1,6 @@
 package com.tais.tornado_plugins.util;
 
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbService;
@@ -11,7 +10,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
-import com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow;
+
 
 import javax.swing.*;
 import javax.xml.datatype.DatatypeConstants;
@@ -44,31 +43,6 @@ public class TornadoTWTask {
      * @param project the IntelliJ project
      * @param model the list model to which tasks should be added
      */
-    public static void addTask(Project project, DefaultListModel<String> model) {
-        //ToolWindow maybe created before the Psi index,
-        // so when the Psi index is not finished creating, skip
-        if (DumbService.isDumb(project) || model == null) return;
-        model.clear();
-        taskList = new ArrayList<>();
-        taskMap = new HashMap<>();
-
-        PsiManagerImpl manager = new PsiManagerImpl(project);
-        if (FileEditorManager.getInstance(project).getSelectedFiles().length == 0) return;
-        PsiFile file = manager.findFile(Objects.requireNonNull(FileEditorManager.getInstance(project).getSelectedFiles()[0]));
-        assert file != null;
-        importCodeBlock = getImportCode(file);
-        taskList = findAnnotatedVariables(file);
-        if (taskList == null) return;
-        for (PsiMethod task : taskList) {
-            if (validateTask(task)) {
-                String displayName = psiMethodFormat(task);
-                taskMap.put(displayName, task);
-                model.addElement(displayName);
-            }
-        }
-        //TornadoToolsWindow.getList().repaint();
-    }
-
     public static void refresh(Project project, VirtualFile virtualFile, DefaultListModel<String> model){
         if (DumbService.isDumb(project) || model == null) return;
         model.clear();

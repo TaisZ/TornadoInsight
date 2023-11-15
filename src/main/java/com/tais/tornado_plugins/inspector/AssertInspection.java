@@ -52,7 +52,7 @@ public class AssertInspection extends AbstractBaseJavaLocalInspectionTool {
                         public void visitAssertStatement(PsiAssertStatement statement) {
                             super.visitAssertStatement(statement);
                             // Add the parent method to a list of problematic methods
-                            ProblemMethods.getInstance().addMethod(parent);
+                            ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                             //register the assert statement as an error
                             holder.registerProblem(statement,
                                     MessageBundle.message("inspection.assert"),

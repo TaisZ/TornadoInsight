@@ -58,7 +58,7 @@ public class RecursionInspection extends AbstractBaseJavaLocalInspectionTool {
                             Set<PsiMethod> visited = new HashSet<>();
                             if (isRecursive(calledMethod, visited)) {
                                 if (calledMethod == null) return;
-                                ProblemMethods.getInstance().addMethod(calledMethod);
+                                ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), calledMethod);
                                 holder.registerProblem(
                                         calledMethod,
                                         MessageBundle.message("inspection.recursion"),

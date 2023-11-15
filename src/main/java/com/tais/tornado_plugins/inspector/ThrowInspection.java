@@ -55,7 +55,7 @@ public class ThrowInspection extends AbstractBaseJavaLocalInspectionTool {
                         public void visitThrowStatement(PsiThrowStatement statement) {
                             super.visitThrowStatement(statement);
                             if (!reportedStatement.contains(statement)) {
-                                ProblemMethods.getInstance().addMethod(parent);
+                                ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                                 holder.registerProblem(statement,
                                         MessageBundle.message("inspection.traps.throw"),
                                         ProblemHighlightType.ERROR);
@@ -67,7 +67,7 @@ public class ThrowInspection extends AbstractBaseJavaLocalInspectionTool {
                         @Override
                         public void visitTryStatement(PsiTryStatement statement) {
                             super.visitTryStatement(statement);
-                            ProblemMethods.getInstance().addMethod(parent);
+                            ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                             holder.registerProblem(statement,
                                     MessageBundle.message("inspection.traps.tryCatch"),
                                     ProblemHighlightType.ERROR);
@@ -79,7 +79,7 @@ public class ThrowInspection extends AbstractBaseJavaLocalInspectionTool {
                             holder.registerProblem(parent.getThrowsList(),
                                     MessageBundle.message("inspection.traps.throws")+ "\n" + exception.getCanonicalText(),
                                     ProblemHighlightType.ERROR);
-                            ProblemMethods.getInstance().addMethod(parent);
+                            ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                         }
                         reportedMethod.add(parent);
                     }

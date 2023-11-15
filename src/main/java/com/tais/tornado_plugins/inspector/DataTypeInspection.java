@@ -91,7 +91,7 @@ public class DataTypeInspection extends AbstractBaseJavaLocalInspectionTool {
                                     && !type.getCanonicalText().startsWith("char[]") && !type.getCanonicalText().startsWith("float[]")
                                     && !type.getCanonicalText().startsWith("byte[]") && !type.getCanonicalText().startsWith("short[]")
                                     && !type.equalsToText("Int3") && !(supportedType.contains(type.toString().replace("PsiType:", "")))) {
-                                ProblemMethods.getInstance().addMethod(parent);
+                                ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                                 holder.registerProblem(
                                         variable,
                                         MessageBundle.message("inspection.datatype"),
