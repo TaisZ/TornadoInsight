@@ -125,6 +125,7 @@ public class TornadoSettingsComponent {
                 if (!processOutput.toString().contains("java version \"21\"")) {
                     stringAtomicReference.set(MessageBundle.message("ui.settings.validation.javaVersion"));
                 }
+                TornadoSettingState.getInstance().isValid = true;
             } catch (Exception e) {
                 stringAtomicReference.set(MessageBundle.message("ui.settings.validation.invalidJava"));
             }

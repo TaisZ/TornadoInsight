@@ -26,7 +26,7 @@ import java.util.Date;
 @Service
 public final class MessageUtils implements Disposable {
     
-    private Project project;
+    private final Project project;
     private ConsoleView consoleView;
     private ToolWindow toolWindow;
 

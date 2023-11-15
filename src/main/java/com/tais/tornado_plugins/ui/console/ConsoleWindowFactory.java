@@ -17,7 +17,6 @@ public class ConsoleWindowFactory implements ToolWindowFactory, DumbAware {
 
         @Override
         public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-
             ConsolePanel consolePanel = new ConsolePanel(toolWindow, project);
             Content content = toolWindow.getContentManager().getFactory().createContent(consolePanel, "", true);
             toolWindow.getContentManager().addContent(content);
@@ -31,7 +30,7 @@ public class ConsoleWindowFactory implements ToolWindowFactory, DumbAware {
 
         @Override
         public boolean shouldBeAvailable(@NotNull Project project) {
-            return false;
+            return true;
         }
 
 }

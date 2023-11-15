@@ -85,25 +85,25 @@
                          enabledByDefault="true">
 
         </localInspection>
-        <toolWindow factoryClass="com.tais.tornado_plugins.ui.newtoolwindow.TornadoSideWindow" id="newWindow" anchor="left" />
-        <toolWindow factoryClass="com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow" id="TornadoVM" anchor="right" icon="TornadoIcons.TornadoIcon"/>
+        <toolWindow factoryClass="com.tais.tornado_plugins.ui.newtoolwindow.TornadoSideWindow" id="TornadoVM" anchor="right" icon="TornadoIcons.TornadoIcon" />
+<!--        <toolWindow factoryClass="com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow" id="TornadoVM" anchor="right" icon="TornadoIcons.TornadoIcon"/>-->
         <applicationConfigurable instance="com.tais.tornado_plugins.ui.settings.TornadoSettingConfiguration"
                                  displayName="TornadoVM"/>
         <applicationService serviceImplementation="com.tais.tornado_plugins.ui.settings.TornadoSettingState"/>
         <psi.treeChangeListener implementation="com.tais.tornado_plugins.listener.PsiChangeListener"/>
-        <toolWindow factoryClass="com.tais.tornado_plugins.ui.console.ConsoleWindowFactory" id="Console" anchor="bottom"/>
+        <toolWindow factoryClass="com.tais.tornado_plugins.ui.console.ConsoleWindowFactory" id="TornadoInsight Console" anchor="bottom"/>
         <errorHandler implementation="com.tais.tornado_plugins.error.ErrorSubmitter"/>
     </extensions>
     <actions>
         <group id="tornado.bar">
-            <action id="tornado.refresh" class="com.tais.tornado_plugins.ui.newtoolwindow.RefreshAction" text="Refresh" description="Refresh"
-                icon="AllIcons.Actions.Refresh"/>
-            <action id="tornado.runInspection" class="com.tais.tornado_plugins.ui.newtoolwindow.RunInspectionAction"
+            <action id="tornado.refresh" class="com.tais.tornado_plugins.service.RefreshAction" text="Refresh" description="Refresh"
+                    icon="AllIcons.Actions.Refresh"/>
+            <action id="tornado.runInspection" class="com.tais.tornado_plugins.service.RunInspectionAction"
                     text="Run Dynamic Inspection" description="Run dynamic inspection" icon="AllIcons.Actions.Execute"/>
             <separator/>
-            <action id="tornado.settings" class="com.tais.tornado_plugins.ui.newtoolwindow.SettingsAction"
+            <action id="tornado.settings" class="com.tais.tornado_plugins.service.SettingsAction"
                     text="Settings" description="Settings" icon="AllIcons.General.GearPlain"/>
-            <action id="tornado.doc" class="com.tais.tornado_plugins.ui.newtoolwindow.OpenTornadoDocsAction"
+            <action id="tornado.doc" class="com.tais.tornado_plugins.service.OpenTornadoDocsAction"
                     text="TornadoVM Documentation" description="TornadoVM documentation" icon="AllIcons.Toolwindows.Documentation"/>
         </group>
     </actions>

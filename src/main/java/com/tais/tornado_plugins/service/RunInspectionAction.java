@@ -1,10 +1,8 @@
-package com.tais.tornado_plugins.ui.newtoolwindow;
+package com.tais.tornado_plugins.service;
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.dynamicInspection.DynamicInspection;

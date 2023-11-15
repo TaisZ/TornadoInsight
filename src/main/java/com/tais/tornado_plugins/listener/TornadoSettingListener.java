@@ -16,10 +16,13 @@ public class TornadoSettingListener implements ProjectManagerListener {
     @Override
     public void projectOpened(@NotNull Project project) {
         if (TornadoSettingState.getInstance().TornadoRoot == null) {
+            TornadoSettingState.getInstance().isValid = false;
             Notification notification = new Notification("Print", "TornadoVM",
                     "Please configure the TornadoVM environment variable file", NotificationType.INFORMATION);
             notification.addAction(new OpenTornadoSettingAction());
             Notifications.Bus.notify(notification, project);
+        }else {
+            TornadoSettingState.getInstance().isValid = true;
         }
     }
 

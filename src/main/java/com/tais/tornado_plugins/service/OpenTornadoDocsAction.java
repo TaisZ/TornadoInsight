@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.ui.newtoolwindow;
+package com.tais.tornado_plugins.service;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnAction;

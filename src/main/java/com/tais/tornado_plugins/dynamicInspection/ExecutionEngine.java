@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.Future;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -52,7 +51,7 @@ public class ExecutionEngine {
         // To ensure that the code executes on EDT, need use Application.invokeLater().
         MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
                 MessageBundle.message("dynamic.info.start"));
-        Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
             ArrayList<String> files = new ArrayList<>(fileMethodMap.keySet());
             try {
                 compile(tempFolderPath, files);
@@ -64,7 +63,7 @@ public class ExecutionEngine {
         });
     }
 
-    private void compile(String outputDir, ArrayList<String> javaFiles) throws ExecutionException {
+    private void compile(String outputDir, ArrayList<String> javaFiles) {
         MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
                 MessageBundle.message("dynamic.info.compile"));
         GeneralCommandLine commandLine = new GeneralCommandLine();
@@ -95,7 +94,7 @@ public class ExecutionEngine {
         File classFolder = new File(classFolderPath);
         File[] classFiles = classFolder.listFiles((dir, name) -> name.endsWith(".class"));
         if (classFiles == null) {
-            //System.out.println("No .class files found in the specified input folder.");
+            System.out.println("No .class files found in the specified input folder.");
             return;
         }
 

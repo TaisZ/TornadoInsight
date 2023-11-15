@@ -28,7 +28,6 @@ public class ConsolePanel extends SimpleToolWindowPanel implements DataProvider 
         ActionToolbar consoleToolbar = ActionManager.getInstance().createActionToolbar("ConsoleToolbar", consoleGroup, true);
         consoleToolbar.setTargetComponent(toolWindowPanel);
         setToolbar(consoleToolbar.getComponent());
-
     }
 
     public void dispose() {
