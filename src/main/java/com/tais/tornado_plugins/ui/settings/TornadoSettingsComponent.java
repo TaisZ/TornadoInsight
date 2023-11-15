@@ -15,6 +15,7 @@ import com.intellij.util.ui.UI;
 import com.tais.tornado_plugins.util.MessageBundle;
 
 import javax.swing.*;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class TornadoSettingsComponent {
@@ -82,7 +83,7 @@ public class TornadoSettingsComponent {
     }
 
     public int getParameterSize() {
-        if (myParameterSize.getText().isEmpty()) {
+        if (myParameterSize.getText().isEmpty() || Objects.equals(myParameterSize.getText(), "0")) {
             return 32;
         }
         return Integer.parseInt(myParameterSize.getText());
@@ -95,13 +96,22 @@ public class TornadoSettingsComponent {
     public String isValidPath() {
         String path = myTornadoEnv.getText() + "/setvars.sh";
         String JavaPath = myJava21Path.getText();
+        String parameterSize = myParameterSize.getText();
         AtomicReference<String> stringAtomicReference = new AtomicReference<>();
         stringAtomicReference.set("");
         if (StringUtil.isEmpty(path))
             return MessageBundle.message("ui.settings.validation.emptyTornadovm");
         if (StringUtil.isEmpty(JavaPath))
             return MessageBundle.message("ui.settings.validation.emptyJava");
-
+        if (StringUtil.isEmpty(parameterSize)){
+            return MessageBundle.message("ui.settings.validation.emptySize");
+        }
+        try {
+            int size = Integer.parseInt(parameterSize);
+            if (size >= 16384 || size <= 0) return MessageBundle.message("ui.settings.validation.invalidSize");
+        } catch (NumberFormatException e) {
+            return MessageBundle.message("ui.settings.validation.invalidSize");
+        }
         ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
             GeneralCommandLine commandLine = new GeneralCommandLine();
             commandLine.setExePath("/bin/sh");
