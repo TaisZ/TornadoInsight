@@ -28,16 +28,6 @@ import java.util.Objects;
  */
 public class DataTypeInspection extends AbstractBaseJavaLocalInspectionTool {
     // List to hold the types supported as fetched from the config file.
-    static List<String> supportedType;
-    // Load supported data types from the configuration file during class initialization.
-    static {
-        InputStream resource = DataTypeInspection.class.getClassLoader().getResourceAsStream("conf.json");
-        assert resource != null;
-        JsonReader reader = new JsonReader(new InputStreamReader(resource));
-        Conf types = new Gson().fromJson(reader, Conf.class);
-        supportedType = Arrays.asList(types.datatype);
-    }
-
     /**
      * Constructs and returns a PsiElementVisitor that checks Java annotations for
      * specific criteria and highlights problematic data types.
@@ -90,7 +80,7 @@ public class DataTypeInspection extends AbstractBaseJavaLocalInspectionTool {
                                     && !type.getCanonicalText().startsWith("double[]") && !type.getCanonicalText().startsWith("long[]")
                                     && !type.getCanonicalText().startsWith("char[]") && !type.getCanonicalText().startsWith("float[]")
                                     && !type.getCanonicalText().startsWith("byte[]") && !type.getCanonicalText().startsWith("short[]")
-                                    && !type.equalsToText("Int3") && !(supportedType.contains(type.toString().replace("PsiType:", "")))) {
+                                    && !type.equalsToText("Int3") && !type.getCanonicalText().startsWith("uk.ac.manchester.tornado.api.")) {
                                 ProblemMethods.getInstance().addMethod(holder.getProject(), holder.getFile(), parent);
                                 holder.registerProblem(
                                         variable,
@@ -112,12 +102,5 @@ public class DataTypeInspection extends AbstractBaseJavaLocalInspectionTool {
     }
 }
 
-/**
- * Represents the structure of the conf.json file,
- * which contains information about supported data types.
- */
-class Conf {
-    String[] datatype;
-}
 
 
