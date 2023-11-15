@@ -13,11 +13,13 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import com.tais.tornado_plugins.util.MessageBundle;
 import com.tais.tornado_plugins.util.MessageUtils;
 import com.tais.tornado_plugins.util.TornadoTWTask;
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -59,6 +61,8 @@ public class ExecutionEngine {
                 executeJars(tempFolderPath);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }finally {
+                cleanUp();
             }
         });
     }
@@ -210,5 +214,14 @@ public class ExecutionEngine {
                 MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.opencl"), output.getStdout());
             }
         });
+    }
+
+    private void cleanUp(){
+        File file = new File(tempFolderPath);
+        try {
+            FileUtils.deleteDirectory(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -26,7 +26,6 @@ public class CodeGenerator {
         }
         ExecutionEngine executionEngine = new ExecutionEngine(project, dir.getAbsolutePath(), methodFile);
         executionEngine.run();
-        dir.delete();
     }
 
     private static File creatFile(Project project, PsiMethod method, String importCodeBlock, String filename, File dir) {

@@ -13,8 +13,6 @@ import java.util.Objects;
 
 public class DynamicInspection {
     public static void process(Project project, ArrayList<PsiMethod> methodArrayList){
-        PsiManagerImpl manager = new PsiManagerImpl(project);
-        PsiFile file = manager.findFile(Objects.requireNonNull(FileEditorManager.getInstance(project).getSelectedFiles()[0]));
         try {
             CodeGenerator.fileCreationHandler(project,methodArrayList, TornadoTWTask.getImportCodeBlock());
         } catch (IOException e) {
