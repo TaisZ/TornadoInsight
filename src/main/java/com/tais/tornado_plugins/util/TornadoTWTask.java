@@ -125,6 +125,7 @@ public class TornadoTWTask {
 
     // Internal utility method to validate a given PsiMethod to ensure it's a valid TornadoVM task
     private static boolean validateTask(PsiMethod method) {
+        if (method == null) return false;
         PsiElement[] errorElements = PsiTreeUtil.collectElements(method,
                 element -> element instanceof PsiErrorElement);
         if (errorElements.length != 0) return false;
