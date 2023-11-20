@@ -27,10 +27,7 @@ intellij {
     plugins.set(listOf("com.intellij.java"))
 }
 
-dependencies {
-    //// Include the Gson library for JSON processing.
-    implementation("com.google.code.gson:gson:2.10.1")
-}
+dependencies {}
 
 tasks {
     // Set the JVM compatibility versions

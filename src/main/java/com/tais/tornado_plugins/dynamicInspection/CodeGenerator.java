@@ -20,7 +20,7 @@ public class CodeGenerator {
         HashMap<String, PsiMethod> methodFile = new HashMap<>();
         File dir = FileUtilRt.createTempDirectory("files", null);
         for (PsiMethod method : methods) {
-            String fileName = method.getName() + RandomStringUtils.randomAlphanumeric(5);;
+            String fileName = method.getName() + RandomStringUtils.randomAlphanumeric(5);
             File file = creatFile(project, method, importCodeBlock, fileName, dir);
             methodFile.put(file.getAbsolutePath(), method);
         }

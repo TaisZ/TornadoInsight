@@ -1,21 +1,14 @@
 package com.tais.tornado_plugins.inspector;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.PsiErrorElementImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
 import com.tais.tornado_plugins.util.MessageBundle;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,7 +40,7 @@ public class DataTypeInspection extends AbstractBaseJavaLocalInspectionTool {
                 if (Objects.requireNonNull(annotation.getQualifiedName()).endsWith("Parallel") ||
                         annotation.getQualifiedName().endsWith("Reduce")) {
                     PsiMethod parent = PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
-                    assert parent != null;
+                    if (parent == null) return;
                     // Visit all elements inside the method to check for unsupported data types
                     parent.accept(new JavaRecursiveElementVisitor() {
                         @Override

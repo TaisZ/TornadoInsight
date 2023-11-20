@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.ui.newtoolwindow
+package com.tais.tornado_plugins.ui.toolwindow
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
 

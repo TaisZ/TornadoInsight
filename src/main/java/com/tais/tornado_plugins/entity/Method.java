@@ -15,10 +15,10 @@ public class Method {
     private final ArrayList<String> parameterValues; // The values of the method's parameters
 
     // Parameters that need to be transferred to the device
-    private ArrayList<PsiParameter> toDeviceParameters;
+    private final ArrayList<PsiParameter> toDeviceParameters;
 
     // Parameters that need to be transferred back to the host
-    private ArrayList<PsiParameter> toHostParameters;
+    private final ArrayList<PsiParameter> toHostParameters;
 
     /**
      * Constructor for creating a Method instance with basic details.

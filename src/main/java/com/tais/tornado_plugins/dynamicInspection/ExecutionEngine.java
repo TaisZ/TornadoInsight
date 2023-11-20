@@ -14,10 +14,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.encoding.ChangeFileEncodingAction;
 import com.intellij.psi.PsiMethod;
 import com.tais.tornado_plugins.ui.settings.TornadoSettingState;
 import com.tais.tornado_plugins.util.MessageBundle;
@@ -25,7 +21,6 @@ import com.tais.tornado_plugins.util.MessageUtils;
 import com.tais.tornado_plugins.util.TornadoTWTask;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -28,6 +28,7 @@ public class TornadoSettingsComponent {
 
     private final JBTextField myParameterSize = new JBTextField(4);
 
+
     public TornadoSettingsComponent() {
         myTornadoEnv.addBrowseFolderListener("TornadoVM Root Folder", "Choose the .sh file",
                 null,

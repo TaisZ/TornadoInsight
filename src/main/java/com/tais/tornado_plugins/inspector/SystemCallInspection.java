@@ -3,13 +3,7 @@ package com.tais.tornado_plugins.inspector;
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiModifier;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
 import com.tais.tornado_plugins.util.MessageBundle;
@@ -44,7 +38,7 @@ public class SystemCallInspection extends AbstractBaseJavaLocalInspectionTool {
                 if (Objects.requireNonNull(annotation.getQualifiedName()).endsWith("Parallel") ||
                         annotation.getQualifiedName().endsWith("Reduce")) {
                     PsiMethod parent = PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
-                    assert parent != null;
+                    if (parent == null) return;
                     parent.accept(new JavaRecursiveElementVisitor() {
                         @Override
                         public void visitMethodCallExpression(PsiMethodCallExpression expression) {

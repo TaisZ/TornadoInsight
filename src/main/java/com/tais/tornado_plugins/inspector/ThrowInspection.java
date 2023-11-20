@@ -3,14 +3,7 @@ package com.tais.tornado_plugins.inspector;
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiThrowStatement;
-import com.intellij.psi.PsiTryStatement;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
 import com.tais.tornado_plugins.util.MessageBundle;
@@ -48,7 +41,7 @@ public class ThrowInspection extends AbstractBaseJavaLocalInspectionTool {
                 if (Objects.requireNonNull(annotation.getQualifiedName()).endsWith("Parallel") ||
                         annotation.getQualifiedName().endsWith("Reduce")) {
                     PsiMethod parent = PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
-                    assert parent != null;
+                    if (parent == null) return;
                     parent.accept(new JavaRecursiveElementVisitor() {
                         //Check if an exception is thrown in the function body
                         @Override

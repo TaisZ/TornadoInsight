@@ -1,4 +1,4 @@
-package com.tais.tornado_plugins.ui.newtoolwindow;
+package com.tais.tornado_plugins.ui.toolwindow;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;

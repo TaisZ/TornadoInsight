@@ -24,9 +24,9 @@ import java.nio.charset.StandardCharsets;
 public class ErrorSubmitter extends ErrorReportSubmitter {
 
     private String url = "https://github.com/TaisZ/TornadoInsight/issues/new?";
-    private String pluginId = "com.tais.Tornado_Plugins";
-    private String label = "exception";
-    private int stackTraceLen = 6500;
+    private final String pluginId = "com.tais.Tornado_Plugins";
+    private final String label = "exception";
+    private final int stackTraceLen = 6500;
     @Override
     public @NlsActions.ActionText @NotNull String getReportActionText() {
         return "Report to Vendor";

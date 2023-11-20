@@ -3,14 +3,7 @@ package com.tais.tornado_plugins.inspector;
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiCallExpression;
-import com.intellij.psi.PsiCodeBlock;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.tais.tornado_plugins.entity.ProblemMethods;
 import com.tais.tornado_plugins.util.MessageBundle;
@@ -47,7 +40,7 @@ public class RecursionInspection extends AbstractBaseJavaLocalInspectionTool {
                 if (Objects.requireNonNull(annotation.getQualifiedName()).endsWith("Parallel") ||
                         annotation.getQualifiedName().endsWith("Reduce")) {
                     PsiMethod parent = PsiTreeUtil.getParentOfType(annotation, PsiMethod.class);
-                    assert parent != null;
+                    if (parent == null) return;
 
                     // Visit all elements inside the method to check for recursive calls
                     parent.accept(new JavaRecursiveElementVisitor() {
@@ -69,7 +62,6 @@ public class RecursionInspection extends AbstractBaseJavaLocalInspectionTool {
                 }
             }
 
-            ;
         };
     }
 
@@ -78,7 +70,7 @@ public class RecursionInspection extends AbstractBaseJavaLocalInspectionTool {
      * It traverses the input method's body and adds the method call into the set.
      * If the same method is added to the set again, it indicates a recursive call.
      *
-     * @param method The input method to be checked.
+     * @param method  The input method to be checked.
      * @param visited A set that stores the method call chain.
      * @return a boolean value that indicates if the input method has a recursive call.
      */
