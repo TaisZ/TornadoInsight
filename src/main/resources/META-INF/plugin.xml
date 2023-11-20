@@ -8,14 +8,22 @@
     <name>TornadoInsight</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="zuotais@foxmail.com" url="https://www.yourcompany.com">TornadoVM_Tais</vendor>
+    <vendor email="zuotais@foxmail.com" url="https://www.tornadovm.org/contact-us">TornadoVM_Tais</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    The demo of plugins.<br>
-    <em>Some demos here to try the idea plugs dev</em>
+    TornadoInsight is an open source IntelliJ plugins,
+    for developers to enhance the developer experience when working with TornadoVM.
+     TornadoInsight is designed exclusively for TornadoVM development.
+      It goes beyond the conventional by providing a built-in on-the-fly static checker,
+      empowering developers to identify unsupported Java features in TornadoVM and
+      understand the reasons behind these limitations. Additionally,
+       TornadoInsight introduces a dynamic testing framework,
+       enabling developers to test individual TornadoVM tasks effortlessly.
+       It automatically wraps TornadoVM tasks, invoking the native TornadoVM
+       runtime on the developer's machine for seamless debugging and testing.
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -86,7 +94,6 @@
 
         </localInspection>
         <toolWindow factoryClass="com.tais.tornado_plugins.ui.toolwindow.TornadoSideWindow" id="TornadoVM" anchor="right" icon="TornadoIcons.TornadoIcon" />
-<!--        <toolWindow factoryClass="com.tais.tornado_plugins.ui.toolwindow.TornadoToolsWindow" id="TornadoVM" anchor="right" icon="TornadoIcons.TornadoIcon"/>-->
         <applicationConfigurable instance="com.tais.tornado_plugins.ui.settings.TornadoSettingConfiguration"
                                  displayName="TornadoVM"/>
         <applicationService serviceImplementation="com.tais.tornado_plugins.ui.settings.TornadoSettingState"/>
