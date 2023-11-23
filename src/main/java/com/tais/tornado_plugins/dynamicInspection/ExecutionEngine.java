@@ -53,7 +53,6 @@ public class ExecutionEngine {
 
     public void run(){
         // Performing UI related operations on a non-EDT is not allowed.
-        // To ensure that the code executes on EDT, need use Application.invokeLater().
         MessageUtils.getInstance(project).showInfoMsg(MessageBundle.message("dynamic.info.title"),
                 MessageBundle.message("dynamic.info.start"));
         long startTime = System.currentTimeMillis();

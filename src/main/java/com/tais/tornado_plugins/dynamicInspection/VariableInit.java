@@ -12,7 +12,6 @@ public class VariableInit {
 
     public static int parameterSize;
 
-
     public static String variableInitHelper(@NotNull PsiMethod method) {
         parameterSize = TornadoSettingState.getInstance().parameterSize;
         ArrayList<String> parametersName = new ArrayList<>();
@@ -35,7 +34,6 @@ public class VariableInit {
         return returnString.toString();
     }
 
-    //todo: add more datatype init;
     private static String lookupBoxedTypes(String type, String name, int size){
         return switch (type) {
             case "int" -> "=" + generateValueByType("Int") + ";";

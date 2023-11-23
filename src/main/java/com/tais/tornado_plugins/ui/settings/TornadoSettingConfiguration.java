@@ -8,6 +8,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Objects;
 
+/**
+ * The instantiation of a generic Configurable implementation is documented in the interface file.
+ * A few high-level points are reviewed here:
+ *  - The Configurable.reset() method is invoked immediately after Configurable.createComponent().
+ *    Initialization of Setting values in the constructor or createComponent() is unnecessary.
+ *  - Once instantiated, a Configurable instance's lifetime continues regardless of whether
+ *    the implementation's Settings are changed, or the user chooses a different entry on the Settings Dialog menu.
+ *  - A Configurable instance's lifetime ends when OK or Cancel is selected in the Settings Dialog.
+ *    An instance's Configurable.disposeUIResources() is called when the Settings Dialog is closing.
+ */
 public class TornadoSettingConfiguration implements Configurable {
     private TornadoSettingsComponent mySettingsComponent;
 

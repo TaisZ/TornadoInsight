@@ -34,6 +34,7 @@ public class TornadoSettingListener implements ProjectManagerListener {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
+            // To show specific Configurable, TornadoVM
             ShowSettingsUtil.getInstance().showSettingsDialog(e.getProject(), "TornadoVM");
             notification.expire();
         }

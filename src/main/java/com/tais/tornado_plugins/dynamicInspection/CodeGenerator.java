@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CodeGenerator {
+
     public static void fileCreationHandler(Project project, ArrayList<PsiMethod> methods, String importCodeBlock) throws IOException {
         HashMap<String, PsiMethod> methodFile = new HashMap<>();
         File dir = FileUtilRt.createTempDirectory("files", null);
